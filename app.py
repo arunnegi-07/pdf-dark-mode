@@ -1,3 +1,9 @@
+import streamlit as st
+import subprocess
+import tempfile
+import os
+import uuid
+
 if st.button("🚀 Convert PDF(s)", use_container_width=True):
 
     import zipfile

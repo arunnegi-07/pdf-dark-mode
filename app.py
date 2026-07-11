@@ -1,83 +1,63 @@
-import streamlit as st
-import subprocess
-import tempfile
-import os
-import uuid
+if st.button("🚀 Convert PDF(s)", use_container_width=True):
 
-st.set_page_config(
-    page_title="PDF Dark Mode Converter",
-    page_icon="📄",
-    layout="centered"
-)
+    import zipfile
 
-st.title("📄 PDF Dark Mode Converter")
+    zip_path = os.path.join(tempfile.gettempdir(), f"{uuid.uuid4().hex}.zip")
 
-st.markdown("""
-Convert your PDFs into a comfortable dark theme while preserving:
+    progress = st.progress(0)
+    status = st.empty()
 
-- ✅ Hyperlinks
-- ✅ Bookmarks
-- ✅ Searchable Text
-- ✅ PDF Quality
-""")
+    with zipfile.ZipFile(zip_path, "w") as zipf:
 
-uploaded_file = st.file_uploader(
-    "Upload a PDF",
-    type=["pdf"]
-)
+        total = len(uploaded_files)
 
-theme = st.radio(
-    "Choose Dark Theme",
-    (
-        "Soft Dark (Gray)",
-        "Pure Black"
-    )
-)
+        for index, uploaded_file in enumerate(uploaded_files):
 
-if uploaded_file:
+            status.write(f"📄 Processing **{uploaded_file.name}** ({index+1}/{total})")
 
-    st.info(f"Selected Theme: **{theme}**")
+            unique_id = uuid.uuid4().hex
 
-    if st.button("🚀 Convert PDF", use_container_width=True):
-
-        unique_id = uuid.uuid4().hex
-
-        input_pdf = os.path.join(tempfile.gettempdir(), f"{unique_id}_input.pdf")
-        output_pdf = os.path.join(tempfile.gettempdir(), f"{unique_id}_output.pdf")
-
-        with open(input_pdf, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
-        if theme == "Soft Dark (Gray)":
-
-            transfer = (
-                "{1 exch sub 0.8 mul 0.2 add}"
-                "{1 exch sub 0.8 mul 0.2 add}"
-                "{1 exch sub 0.8 mul 0.2 add}"
-                "{1 exch sub 0.8 mul 0.2 add}"
+            input_pdf = os.path.join(
+                tempfile.gettempdir(),
+                f"{unique_id}_input.pdf"
             )
 
-        else:
-
-            transfer = (
-                "{1 exch sub}"
-                "{1 exch sub}"
-                "{1 exch sub}"
-                "{1 exch sub}"
+            output_pdf = os.path.join(
+                tempfile.gettempdir(),
+                f"{unique_id}_output.pdf"
             )
 
-        cmd = [
-            "gs",
-            "-o",
-            output_pdf,
-            "-sDEVICE=pdfwrite",
-            "-c",
-            transfer + " setcolortransfer",
-            "-f",
-            input_pdf,
-        ]
+            with open(input_pdf, "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
-        with st.spinner("Converting PDF..."):
+            if theme == "Soft Dark (Gray)":
+
+                transfer = (
+                    "{1 exch sub 0.8 mul 0.2 add}"
+                    "{1 exch sub 0.8 mul 0.2 add}"
+                    "{1 exch sub 0.8 mul 0.2 add}"
+                    "{1 exch sub 0.8 mul 0.2 add}"
+                )
+
+            else:
+
+                transfer = (
+                    "{1 exch sub}"
+                    "{1 exch sub}"
+                    "{1 exch sub}"
+                    "{1 exch sub}"
+                )
+
+            cmd = [
+                "gs",
+                "-o",
+                output_pdf,
+                "-sDEVICE=pdfwrite",
+                "-c",
+                transfer + " setcolortransfer",
+                "-f",
+                input_pdf,
+            ]
 
             result = subprocess.run(
                 cmd,
@@ -85,28 +65,37 @@ if uploaded_file:
                 stderr=subprocess.PIPE,
             )
 
-        if result.returncode == 0:
+            if result.returncode != 0:
 
-            st.success("✅ Conversion completed successfully!")
+                st.error(f"❌ Failed to convert {uploaded_file.name}")
 
-            with open(output_pdf, "rb") as f:
+                st.code(result.stderr.decode())
 
-                st.download_button(
-                    "⬇ Download Converted PDF",
-                    f,
-                    file_name="converted.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
+                continue
 
-        else:
+            zipf.write(
+                output_pdf,
+                arcname=uploaded_file.name
+            )
 
-            st.error("❌ Ghostscript failed to convert the PDF.")
+            progress.progress((index + 1) / total)
 
-            st.code(result.stderr.decode())
+            if os.path.exists(input_pdf):
+                os.remove(input_pdf)
 
-        if os.path.exists(input_pdf):
-            os.remove(input_pdf)
+            if os.path.exists(output_pdf):
+                os.remove(output_pdf)
 
-        if os.path.exists(output_pdf):
-            os.remove(output_pdf)
+    status.success("✅ All PDFs converted successfully!")
+
+    with open(zip_path, "rb") as f:
+
+        st.download_button(
+            "⬇ Download ZIP",
+            f,
+            file_name="Converted_PDFs.zip",
+            mime="application/zip",
+            use_container_width=True
+        )
+
+    os.remove(zip_path)

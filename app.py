@@ -1,82 +1,112 @@
 import streamlit as st
 import subprocess
+import tempfile
+import os
+import uuid
 
-st.set_page_config(page_title="PDF Dark Mode Converter")
-
-st.title("📄 PDF Dark Mode Converter")
-st.write("Upload your PDF and choose a dark theme.")
-
-uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
-
-theme = st.radio(
-    "Choose Theme",
-    [
-        "Soft Dark (Gray)",
-        "Pure Black",
-        "Green Dark"
-    ]
+st.set_page_config(
+    page_title="PDF Dark Mode Converter",
+    page_icon="📄",
+    layout="centered"
 )
 
-if uploaded_file is not None:
+st.title("📄 PDF Dark Mode Converter")
 
-    # Save uploaded file
-    with open("input.pdf", "wb") as f:
-        f.write(uploaded_file.getbuffer())
+st.markdown("""
+Convert your PDFs into a comfortable dark theme while preserving:
 
-    # Select Ghostscript color transfer
-    if theme == "Soft Dark (Gray)":
-        transfer = (
-            "{1 exch sub 0.8 mul 0.2 add}"
-            "{1 exch sub 0.8 mul 0.2 add}"
-            "{1 exch sub 0.8 mul 0.2 add}"
-            "{1 exch sub 0.8 mul 0.2 add}"
-        )
+- ✅ Hyperlinks
+- ✅ Bookmarks
+- ✅ Searchable Text
+- ✅ PDF Quality
+""")
 
-    elif theme == "Pure Black":
-        transfer = (
-            "{1 exch sub}"
-            "{1 exch sub}"
-            "{1 exch sub}"
-            "{1 exch sub}"
-        )
+uploaded_file = st.file_uploader(
+    "Upload a PDF",
+    type=["pdf"]
+)
 
-    elif theme == "Green Dark":
-        # Approximate green theme
-        transfer = (
-            "{1 exch sub 0.65 mul 0.10 add}"   # Red
-            "{1 exch sub}"                     # Green
-            "{1 exch sub 0.65 mul 0.10 add}"   # Blue
-            "{1 exch sub 0.65 mul 0.10 add}"   # Gray
-        )
+theme = st.radio(
+    "Choose Dark Theme",
+    (
+        "Soft Dark (Gray)",
+        "Pure Black"
+    )
+)
 
-    output_file = "output.pdf"
+if uploaded_file:
 
-    cmd = [
-        "gs",
-        "-o",
-        output_file,
-        "-sDEVICE=pdfwrite",
-        "-c",
-        transfer + " setcolortransfer",
-        "-f",
-        "input.pdf",
-    ]
+    st.info(f"Selected Theme: **{theme}**")
 
-    if st.button("Convert"):
+    if st.button("🚀 Convert PDF", use_container_width=True):
 
-        result = subprocess.run(cmd)
+        unique_id = uuid.uuid4().hex
+
+        input_pdf = os.path.join(tempfile.gettempdir(), f"{unique_id}_input.pdf")
+        output_pdf = os.path.join(tempfile.gettempdir(), f"{unique_id}_output.pdf")
+
+        with open(input_pdf, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        if theme == "Soft Dark (Gray)":
+
+            transfer = (
+                "{1 exch sub 0.8 mul 0.2 add}"
+                "{1 exch sub 0.8 mul 0.2 add}"
+                "{1 exch sub 0.8 mul 0.2 add}"
+                "{1 exch sub 0.8 mul 0.2 add}"
+            )
+
+        else:
+
+            transfer = (
+                "{1 exch sub}"
+                "{1 exch sub}"
+                "{1 exch sub}"
+                "{1 exch sub}"
+            )
+
+        cmd = [
+            "gs",
+            "-o",
+            output_pdf,
+            "-sDEVICE=pdfwrite",
+            "-c",
+            transfer + " setcolortransfer",
+            "-f",
+            input_pdf,
+        ]
+
+        with st.spinner("Converting PDF..."):
+
+            result = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
 
         if result.returncode == 0:
 
-            with open(output_file, "rb") as f:
+            st.success("✅ Conversion completed successfully!")
+
+            with open(output_pdf, "rb") as f:
+
                 st.download_button(
                     "⬇ Download Converted PDF",
                     f,
                     file_name="converted.pdf",
                     mime="application/pdf",
+                    use_container_width=True
                 )
 
-            st.success("Conversion completed!")
-
         else:
-            st.error("Ghostscript failed to convert the PDF.")
+
+            st.error("❌ Ghostscript failed to convert the PDF.")
+
+            st.code(result.stderr.decode())
+
+        if os.path.exists(input_pdf):
+            os.remove(input_pdf)
+
+        if os.path.exists(output_pdf):
+            os.remove(output_pdf)

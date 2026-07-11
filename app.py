@@ -4,7 +4,39 @@ import tempfile
 import os
 import uuid
 
-if st.button("🚀 Convert PDF(s)", use_container_width=True):
+st.set_page_config(
+    page_title="PDF Dark Mode Converter",
+    page_icon="📄",
+    layout="centered"
+)
+
+st.title("📄 PDF Dark Mode Converter")
+
+st.markdown("""
+Convert your PDFs into a comfortable dark theme while preserving:
+
+- ✅ Hyperlinks
+- ✅ Bookmarks
+- ✅ Searchable Text
+- ✅ PDF Quality
+""")
+
+uploaded_file = st.file_uploader(
+    "Upload a PDF",
+    type=["pdf"]
+)
+
+theme = st.radio(
+    "Choose Dark Theme",
+    (
+        "Soft Dark (Gray)",
+        "Pure Black"
+    )
+)
+
+if uploaded_file:
+
+    if st.button("🚀 Convert PDF(s)", use_container_width=True):
 
     import zipfile
 

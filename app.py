@@ -13,6 +13,15 @@ st.set_page_config(
 
 st.title("📄 PDF Dark Mode Converter")
 
+# Advantages Section
+st.markdown("""
+Convert your PDFs into a comfortable dark theme while preserving:
+- ✅ Hyperlinks
+- ✅ Bookmarks
+- ✅ Searchable Text
+- ✅ PDF Quality
+""")
+
 # Limitations Section
 with st.expander("⚠️ Known Limitations"):
     st.write("""

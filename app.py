@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Website Name Header (Top-Left)
+# Website Name Header (Top-Left) - st.title removed to prevent centering
 st.markdown("""
 <div style="display: flex; align-items: center; margin-bottom: 20px;">
     <h1 style="margin: 0;">📄 PDF Dark Mode Converter</h1>

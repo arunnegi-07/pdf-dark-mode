@@ -11,7 +11,12 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("📄 PDF Dark Mode Converter")
+# Website Name Header (Top-Left)
+st.markdown("""
+<div style="display: flex; align-items: center; margin-bottom: 20px;">
+    <h1 style="margin: 0;">📄 PDF Dark Mode Converter</h1>
+</div>
+""", unsafe_allow_html=True)
 
 # Side-by-side layout for Advantages and Limitations
 col1, col2 = st.columns(2)
@@ -28,9 +33,8 @@ with col1:
 with col2:
     st.markdown("#### Limitations")
     st.markdown("""
-       ❌ Images will be inverted\n
-       ❌ Only two color modes\n
-
+        ❌ Images will be inverted\n
+        ❌ Only two color modes\n
     """)
 
 st.divider()

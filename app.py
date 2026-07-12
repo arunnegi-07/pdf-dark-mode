@@ -13,21 +13,27 @@ st.set_page_config(
 
 st.title("📄 PDF Dark Mode Converter")
 
-# Advantages Section
-st.markdown("""
-Convert your PDFs into a comfortable dark theme while preserving:
-- ✅ Hyperlinks
-- ✅ Bookmarks
-- ✅ Searchable Text
-- ✅ PDF Quality
-""")
+# Side-by-side layout for Advantages and Limitations
+col1, col2 = st.columns(2)
 
-# Limitations Section
-with st.expander("⚠️ Known Limitations"):
-    st.write("""
-    - **Images:** Image colors will be inverted (negative effect).
-    - **Color Modes:** Only two dark themes are currently available.
+with col1:
+    st.markdown("### ✅ Advantages")
+    st.markdown("""
+    - Hyperlinks preserved
+    - Bookmarks maintained
+    - Searchable text remains
+    - Original PDF quality
     """)
+
+with col2:
+    st.markdown("### ❌ Limitations")
+    st.markdown("""
+    - Images will be inverted
+    - Only two color modes
+    - Complex vector formulas
+    """)
+
+st.divider()
 
 # Input widgets
 uploaded_files = st.file_uploader(

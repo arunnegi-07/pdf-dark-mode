@@ -8,17 +8,18 @@ import re
 # Page configuration
 st.set_page_config(page_title="PDF Dark Mode Converter", page_icon="📄", layout="centered")
 
-# CSS to handle the dynamic border color for the page range input
+# CSS: This targets the box in all states (normal, hover, and focus)
 st.markdown("""
 <style>
-    /* Default border color */
-    .stTextInput > div > div > input {
-        border: 2px solid #31333F;
+    /* Remove default Streamlit focus border and set custom one */
+    .stTextInput > div > div > input:focus {
+        outline: none !important;
+        box-shadow: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Website Name Header
+# Header
 st.markdown("<h1>📄 PDF Dark Mode Converter</h1>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
@@ -33,17 +34,22 @@ st.divider()
 
 uploaded_files = st.file_uploader("Upload PDF(s)", type=["pdf"], accept_multiple_files=True)
 
-# Page Range Logic
+# Page Range Input
 page_range = st.text_input("Page Range (Optional, e.g., 1-10)", placeholder="Leave blank for all pages")
 
-# Validate format: matches digit-digit or empty
+# Validate
 is_valid = page_range == "" or re.match(r"^\d+-\d+$", page_range)
 
-# Dynamic CSS injection based on validation
-if page_range and not is_valid:
-    st.markdown("<style>.stTextInput > div > div > input { border: 2px solid #FF4B4B !important; }</style>", unsafe_allow_html=True)
-elif page_range and is_valid:
-    st.markdown("<style>.stTextInput > div > div > input { border: 2px solid #00FF00 !important; }</style>", unsafe_allow_html=True)
+# Conditional Border CSS
+border_color = "#00FF00" if (page_range == "" or is_valid) else "#FF4B4B"
+if page_range:
+    st.markdown(f"""
+    <style>
+        .stTextInput > div > div > input {{
+            border: 2px solid {border_color} !important;
+        }}
+    </style>
+    """, unsafe_allow_html=True)
 
 theme = st.radio("Choose Dark Theme", ("Soft Dark (Gray)", "Pure Black"))
 

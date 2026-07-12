@@ -11,17 +11,10 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS override to force the title to the left
-st.markdown("""
-<style>
-    .main .block-container h1 {
-        text-align: left !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Website Name Header
-st.markdown("<h1>📄 PDF Dark Mode Converter</h1>", unsafe_allow_html=True)
+# Force the title to the left by putting it in a separate full-width column
+title_col = st.columns([1])
+with title_col[0]:
+    st.markdown("<h1>📄 PDF Dark Mode Converter</h1>", unsafe_allow_html=True)
 
 # Side-by-side layout for Advantages and Limitations
 col1, col2 = st.columns(2)

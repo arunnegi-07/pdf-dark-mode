@@ -17,20 +17,20 @@ st.title("📄 PDF Dark Mode Converter")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### ✅ Advantages")
+    st.markdown("## Advantages")
     st.markdown("""
-    - Hyperlinks preserved
-    - Bookmarks maintained
-    - Searchable text remains
-    - Original PDF quality
+    ✅ Hyperlinks preserved
+    ✅ Bookmarks maintained
+    ✅ Searchable text remains
+    ✅ Original PDF quality
     """)
 
 with col2:
-    st.markdown("### ❌ Limitations")
+    st.markdown("## Limitations")
     st.markdown("""
-    - Images will be inverted
-    - Only two color modes
-    - Complex vector formulas
+     ❌ Images will be inverted
+     ❌ Only two color modes
+
     """)
 
 st.divider()

@@ -20,16 +20,16 @@ with col1:
     st.markdown("## Advantages")
     st.markdown("""
     ✅ Hyperlinks preserved\n
-    ✅ Bookmarks maintained
-    ✅ Searchable text remains
-    ✅ Original PDF quality
+    ✅ Bookmarks maintained\n
+    ✅ Searchable text remains\n
+    ✅ Original PDF quality\n
     """)
 
 with col2:
     st.markdown("## Limitations")
     st.markdown("""
-     ❌ Images will be inverted
-     ❌ Only two color modes
+     ❌ Images will be inverted\n
+     ❌ Only two color modes\n
 
     """)
 

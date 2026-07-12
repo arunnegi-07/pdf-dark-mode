@@ -19,7 +19,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("## Advantages")
     st.markdown("""
-    ✅ Hyperlinks preserved
+    ✅ Hyperlinks preserved\n
     ✅ Bookmarks maintained
     ✅ Searchable text remains
     ✅ Original PDF quality

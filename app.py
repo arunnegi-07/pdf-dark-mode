@@ -4,18 +4,6 @@ import tempfile
 import os
 import uuid
 
-st.set_page_config(page_title="PDF Dark Mode Converter", layout="centered")
-
-# Force the title to the left despite the "centered" layout
-st.markdown("""
-<style>
-    .stApp > header { display: none; }
-    h1 { text-align: left !important; }
-</style>
-""", unsafe_allow_html=True)
-
-# Now your title will respect the left alignment
-st.markdown("<h1>📄 PDF Dark Mode Converter</h1>", unsafe_allow_html=True)
 # Page configuration
 st.set_page_config(
     page_title="PDF Dark Mode Converter",
@@ -23,12 +11,17 @@ st.set_page_config(
     layout="centered"
 )
 
-# Website Name Header (Top-Left) - st.title removed to prevent centering
+# CSS override to force the title to the left
 st.markdown("""
-<div style="display: flex; align-items: center; margin-bottom: 20px;">
-    <h1 style="margin: 0;">📄 PDF Dark Mode Converter</h1>
-</div>
+<style>
+    .main .block-container h1 {
+        text-align: left !important;
+    }
+</style>
 """, unsafe_allow_html=True)
+
+# Website Name Header
+st.markdown("<h1>📄 PDF Dark Mode Converter</h1>", unsafe_allow_html=True)
 
 # Side-by-side layout for Advantages and Limitations
 col1, col2 = st.columns(2)

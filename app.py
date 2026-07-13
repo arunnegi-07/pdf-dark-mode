@@ -25,10 +25,16 @@ st.markdown("<h1>📄 PDF Dark Mode Converter</h1>", unsafe_allow_html=True)
 col1, col2 = st.columns(2)
 with col1:
     st.markdown("#### Advantages")
-    st.markdown("✅ Hyperlinks preserved\n✅ Bookmarks maintained\n✅ Searchable text remains\n✅ Original PDF quality")
+    st.markdown("
+    ✅ Hyperlinks preserved\n
+    ✅ Bookmarks maintained\n
+    ✅ Searchable text remains\n
+    ✅ Original PDF quality")
 with col2:
     st.markdown("#### Limitations")
-    st.markdown("❌ Images will be inverted\n❌ Only two color modes")
+    st.markdown("
+    ❌ Images will be inverted\n
+    ❌ Only two color modes")
 
 st.divider()
 

@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import subprocess
 import tempfile
@@ -63,8 +62,8 @@ page_range = st.text_input(
     placeholder="Leave blank for all pages"
 )
 
-# Validate
-is_valid = page_range == "" or re.match(r"^\d+-\d+$", page_range)
+# Validate page range
+is_valid = page_range == "" or re.fullmatch(r"\d+-\d+", page_range)
 
 # Conditional Border CSS
 border_color = "#00FF00" if (page_range == "" or is_valid) else "#FF4B4B"
@@ -84,19 +83,21 @@ theme = st.radio(
 )
 
 if uploaded_files:
+
     if st.button("🚀 Convert PDF(s)", use_container_width=True):
 
         if page_range and not is_valid:
             st.error("Invalid page range format. Please use 'Start-End' (e.g., 1-10).")
 
         else:
-            transfer = (
-                "{1 exch sub 0.8 mul 0.2 add}" * 4
-                if theme == "Soft Dark (Gray)"
-                else "{1 exch sub}" * 4
-            )
+
+            if theme == "Soft Dark (Gray)":
+                transfer = "{1 exch sub 0.8 mul 0.2 add}" * 4
+            else:
+                transfer = "{1 exch sub}" * 4
 
             for uploaded_file in uploaded_files:
+
                 unique_id = uuid.uuid4().hex
 
                 input_pdf = os.path.join(
@@ -119,14 +120,17 @@ if uploaded_files:
                     "-c", transfer + " setcolortransfer"
                 ]
 
-                if is_valid and page_range:
-                    parts = page_range.split('-')
+                if page_range:
+                    start, end = page_range.split("-")
                     cmd.extend([
-                        "-dFirstPage=" + parts[0],
-                        "-dLastPage=" + parts[-1]
+                        "-dFirstPage=" + start,
+                        "-dLastPage=" + end
                     ])
 
-                cmd.extend(["-f", input_pdf])
+                cmd.extend([
+                    "-f",
+                    input_pdf
+                ])
 
                 with st.spinner(f"Converting {uploaded_file.name}..."):
                     result = subprocess.run(
@@ -138,17 +142,18 @@ if uploaded_files:
                 if result.returncode == 0:
                     with open(output_pdf, "rb") as f:
                         st.download_button(
-                            f"⬇ Download {uploaded_file.name}",
-                            f,
+                            label=f"⬇ Download {uploaded_file.name}",
+                            data=f,
                             file_name=f"dark_{uploaded_file.name}",
+                            mime="application/pdf",
                             use_container_width=True
                         )
                 else:
                     st.error(f"❌ Failed to convert {uploaded_file.name}")
+                    st.code(result.stderr.decode())
 
                 if os.path.exists(input_pdf):
                     os.remove(input_pdf)
 
                 if os.path.exists(output_pdf):
                     os.remove(output_pdf)
-```
